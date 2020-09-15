@@ -257,7 +257,7 @@ $ docker network inspect net_test
 See how the eight containers use different IP addresses, while being part of a
 single Docker network. (We've abbreviated the output for clarity.)
 
-Because we are operating the test network as DigiBank and MagnetoCorp,
+Because we are operating the test network as DigiBank (Org1) and MagnetoCorp (Org2),
 `peer0.org1.example.com` will belong to the DigiBank organization while
 `peer0.org2.example.com` will be operated by MagnetoCorp. Now that the test
 network is up and running, we can refer to our network as PaperNet from this point
@@ -1010,6 +1010,22 @@ Again, see how the commercial paper 00001 was successfully redeemed when
 `redeem.js` invoked the `redeem` transaction defined in `CommercialPaper`.
 Again, it updated commercial paper `00001` within the world state to reflect
 that the ownership returned to MagnetoCorp, the issuer of the paper.
+
+## Alternative Lifecycle: Buy request and transfer (two-phase confirmation) 
+
+In the above `issue - buy - redeem` sample lifecycle, the current owner of the commercial paper was not required to approve the change of ownership (which is fine, as a sample). 
+
+But as described in the [README](https://github.com/hyperledger/fabric-samples/blob/master/commercial-paper/README.md), an alternative lifecycle can be explored: ie. one that requires authorization. That is, the purchase of the commercial paper by an organization (via a `buy_request` transaction) must be authorised or confirmed by the owning organization (`transfer`) to complete change of ownership. In this lifecycle, the smart contract validates the identity's MSP is that of the current owner. Now you have an  `issue - buy_request - transfer - redeem` lifecycle for the commercial paper. This alternative is currently implemented for the `Node.js` sample smart contract and `Node.js` application client. Both commercial paper lifecycles are described further in the Fabric Samples commercial paper [README](https://github.com/hyperledger/fabric-samples/blob/master/commercial-paper/README.md)
+
+## Querying the Ledger
+
+The `Node.js` sample provides you with a DigiBank client application that performs a number of queries (added to the `Node.js` smart contract). This can be used once you complete the Commercial Paper `00001` lifecycle (to which the query application refers) and create ledger data. These include::
+
+    - History of the Commercial Paper (in the output, the paper's state is shown more descriptively eg. 'ISSUED', 'TRADING' etc)
+    - Ownership of Commercial Paper
+    - Partial Key query: Commercial papers in the `org.papernet.papers` namespace belonging to MagnetoCorp
+    - Named Queries (eg. 'all redeemed papers in a state of 'redeemed' ; 'all commercial papers with a face value > $4m' etc).
+
 
 ## Clean up
 
